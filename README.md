@@ -80,7 +80,7 @@ branch) as they work. When you need to bring each others branches together, do s
 into your own, following the process we've discussed in previous assignments: 
 
 ```
-    Branch 1 name: Clarkk2 -
+  Branch 1 name: Clarkk2 -
   player-actions  
   npc-mechanics: Develop NPC chase logic 
   obstacle-handling 
@@ -98,10 +98,17 @@ What has surprised you so far? Describe your general feelings. Be honest with yo
 ```
     **Feelings for the beginning: I’m excited about the project but slightly worried about managing all the interactions between the classes. I plan to start small with basic player movement and build on that step by step. I’ve created some placeholder assets for testing, and the overall plan feels manageable.
 
+** /project-directory
+  - main.py
+  - player.py
+  - npc.py
+  - fashion_item.py
+  - sound_manager.py
+  - game_manager.py
+  - obstacle.py
+  - item.py
+  - test_suite.py**
 ```
-
----
-
 ## Milestone 3: Virtual Check-In
 
 Indicate what percentage of the project you have left to complete and how confident you feel. 
