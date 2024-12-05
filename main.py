@@ -1,3 +1,4 @@
+import pygame
 from game_manager import GameManager
 
 
@@ -5,56 +6,79 @@ def main():
     """
     Main function to run the Fashion Demon game.
     """
+    # Initialize Pygame
+    pygame.init()
+    screen = pygame.display.set_mode((800, 600))  # Set game window size
+    pygame.display.set_caption("Fashion Demon")
+    clock = pygame.time.Clock()
+
     # Initialize the GameManager
     game_manager = GameManager()
-
-    # Start the game
     game_manager.start_game()
 
-    # Display welcome message and controls
-    print("\nWelcome to Fashion Demon!")
-    print("Can you escape the Fashion Demon and collect legendary items?")
-    print("\nControls:")
-    print("- Type 'pause' to pause the game.")
-    print("- Type 'resume' to resume the game.")
-    print("- Type 'quit' to exit the game.")
-    print("- Type 'status' to view the current game state.\n")
+    # Load images (update paths with actual image locations)
+    player_image = pygame.image.load("images/player.png")
+    npc_image = pygame.image.load("images/npc.png")
+    obstacle_image = pygame.image.load("images/obstacle.png")
+    item_image = pygame.image.load("images/item.png")
 
-    # Game loop
-    while game_manager.game_state == "running":
-        try:
-            # Update game state
-            game_manager.update()
+    # Fonts for text display
+    font = pygame.font.Font(None, 36)
 
-            # Prompt user for input
-            user_input = input("Enter a command (pause/resume/quit/status): ").lower()
+    # Main game loop
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-            # Handle input
-            if user_input == "pause":
-                print("\nGame paused. Type 'resume' to continue.")
-                game_manager.game_state = "paused"
-                while game_manager.game_state == "paused":
-                    resume_input = input("> ").lower()
-                    if resume_input == "resume":
-                        game_manager.game_state = "running"
-                        print("\nGame resumed.")
-            elif user_input == "quit":
-                print("\nExiting the game...")
-                game_manager.end_game()
-                break
-            elif user_input == "status":
-                print(f"\nCurrent Game State:\n{game_manager}\n")
-            else:
-                print("Invalid command. Try 'pause', 'resume', 'quit', or 'status'.\n")
+        # Handle keyboard input
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            game_manager.player.move("up")
+        if keys[pygame.K_DOWN]:
+            game_manager.player.move("down")
+        if keys[pygame.K_LEFT]:
+            game_manager.player.move("left")
+        if keys[pygame.K_RIGHT]:
+            game_manager.player.move("right")
 
-        except KeyboardInterrupt:
-            # Handle interruptions (Ctrl+C)
-            print("\nGame interrupted. Exiting...")
-            game_manager.end_game()
-            break
+        # Update the game state
+        game_manager.update()
 
-    # End game cleanup
-    print("Thank you for playing Fashion Demon! See you next time.")
+        # Clear the screen
+        screen.fill((0, 0, 0))  # Black background
+
+        # Draw the player
+        screen.blit(player_image, (game_manager.player.position[0] * 50, game_manager.player.position[1] * 50))
+
+        # Draw NPCs
+        for npc in game_manager.npcs:
+            screen.blit(npc_image, (npc.position[0] * 50, npc.position[1] * 50))
+
+        # Draw obstacles
+        for obstacle in game_manager.obstacles:
+            screen.blit(obstacle_image, (obstacle.position[0] * 50, obstacle.position[1] * 50))
+
+        # Draw items
+        for item in game_manager.fashion_items:
+            screen.blit(item_image, (item.position[0] * 50, item.position[1] * 50))
+
+        # Display the player's score and health
+        score_text = font.render(f"Fashion Score: {game_manager.player.fashion_score}", True, (255, 255, 255))
+        health_text = font.render(f"Health: {game_manager.player.health}", True, (255, 0, 0))
+        screen.blit(score_text, (10, 10))
+        screen.blit(health_text, (10, 50))
+
+        # Update the display
+        pygame.display.flip()
+
+        # Cap the frame rate
+        clock.tick(30)
+
+    # Quit the game
+    print("Exiting the game...")
+    pygame.quit()
 
 
 if __name__ == "__main__":
