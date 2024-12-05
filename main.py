@@ -1,39 +1,61 @@
-from player import Player
-from npc import NPC
-from fashion_item import FashionItem
-from sound_manager import SoundManager
 from game_manager import GameManager
-from obstacle import Obstacle
-from item import Item
+
 
 def main():
-    player = Player("Uriel")  # Set a default player name
-    npc = NPC("Leviathan")  # Set NPC name
-    sound_manager = SoundManager()
+    """
+    Main function to run the Fashion Demon game.
+    """
+    # Initialize the GameManager
     game_manager = GameManager()
-
-    # Set up the game
-    game_manager.player = player
-    game_manager.npcs.append(npc)
-
-    # Load background music
-    sound_manager.play_background_music()
 
     # Start the game
     game_manager.start_game()
 
-    # Main game loop
-    running = True
-    while running:
-        # Handle events and update game state
-        game_manager.update_game_state()
-        print(f"Player: {player.name}, Score: {player.fashion_score}, Health: {player.health}")
+    # Display welcome message and controls
+    print("\nWelcome to Fashion Demon!")
+    print("Can you escape the Fashion Demon and collect legendary items?")
+    print("\nControls:")
+    print("- Type 'pause' to pause the game.")
+    print("- Type 'resume' to resume the game.")
+    print("- Type 'quit' to exit the game.")
+    print("- Type 'status' to view the current game state.\n")
 
-        if player.health <= 0:
-            print("Game Over!")
-            running = False
+    # Game loop
+    while game_manager.game_state == "running":
+        try:
+            # Update game state
+            game_manager.update()
 
-    game_manager.end_game()
+            # Prompt user for input
+            user_input = input("Enter a command (pause/resume/quit/status): ").lower()
+
+            # Handle input
+            if user_input == "pause":
+                print("\nGame paused. Type 'resume' to continue.")
+                game_manager.game_state = "paused"
+                while game_manager.game_state == "paused":
+                    resume_input = input("> ").lower()
+                    if resume_input == "resume":
+                        game_manager.game_state = "running"
+                        print("\nGame resumed.")
+            elif user_input == "quit":
+                print("\nExiting the game...")
+                game_manager.end_game()
+                break
+            elif user_input == "status":
+                print(f"\nCurrent Game State:\n{game_manager}\n")
+            else:
+                print("Invalid command. Try 'pause', 'resume', 'quit', or 'status'.\n")
+
+        except KeyboardInterrupt:
+            # Handle interruptions (Ctrl+C)
+            print("\nGame interrupted. Exiting...")
+            game_manager.end_game()
+            break
+
+    # End game cleanup
+    print("Thank you for playing Fashion Demon! See you next time.")
+
 
 if __name__ == "__main__":
     main()

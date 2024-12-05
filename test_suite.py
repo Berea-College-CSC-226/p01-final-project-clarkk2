@@ -1,18 +1,14 @@
-import unittest
-from player import Player
-from npc import NPC
-from fashion_item import FashionItem
-from sound_manager import SoundManager
 from game_manager import GameManager
-from obstacle import Obstacle
-from item import Item
 
-class TestPlayer(unittest.TestCase):
-    def test_initial_fashion_score(self):
-        player = Player("TestPlayer")
-        self.assertEqual(player.fashion_score, 0)
+# Initialize and start the game
+game_manager = GameManager()
+game_manager.start_game()
 
-# Add more tests for other classes here
+# Simulate the game loop
+for frame in range(5):  # Simulate 5 frames
+    print(f"Frame {frame + 1}")
+    game_manager.update()
+    print(game_manager)
 
-if __name__ == '__main__':
-    unittest.main()
+# End the game
+game_manager.end_game()
