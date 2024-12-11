@@ -1,81 +1,34 @@
-import os
 import pygame
 
-
 class SoundManager:
-    """
-    Manages background music and sound effects for the game.
-    """
-
     def __init__(self):
-        """
-        Initializes the SoundManager with default settings and sound file paths.
-        """
         pygame.mixer.init()
+        self.music_playlist = [
+            "GameAudio/iflooks.mp3",  # Correct file paths as needed
+            "GameAudio/location.mp3"
+        ]
+        self.current_track_index = 0
+        self.is_music_playing = False
 
-        # Define paths to sound files using os.path.join for cross-platform compatibility
-        self.audio_folder = "audio"
-        self.background_music = None  # Path to the current background music file
-        self.sound_effects = {
-            "steal_points": os.path.join(self.audio_folder, "steal.mp3"),
-            "speed_boost": os.path.join(self.audio_folder, "boost.mp3"),
-            "outfit_change": os.path.join(self.audio_folder, "outfit.mp3"),
-        }
-        self.is_muted = False
+    def play_current_track(self):
+        if not self.is_music_playing:
+            pygame.mixer.music.load(self.music_playlist[self.current_track_index])
+            pygame.mixer.music.play(-1)
+            self.is_music_playing = True
 
-    def play_background_music(self, music_file, loop=True):
-        """
-        Plays or loops the specified background music.
+    def check_music(self):
+        if not pygame.mixer.music.get_busy():
+            self.next_track()
 
-        :param music_file: Path to the music file to play.
-        :param loop: Whether to loop the music indefinitely.
-        """
-        if self.is_muted:
-            print("Sound is muted. Background music not playing.")
-            return
-        self.background_music = os.path.join(self.audio_folder, music_file)
-        pygame.mixer.music.load(self.background_music)
-        pygame.mixer.music.play(-1 if loop else 0)
-        print(f"Playing background music: {self.background_music}")
+    def next_track(self):
+        self.current_track_index = (self.current_track_index + 1) % len(self.music_playlist)
+        pygame.mixer.music.load(self.music_playlist[self.current_track_index])
+        pygame.mixer.music.play(-1)
 
-    def stop_background_music(self):
-        """
-        Stops the background music.
-        """
-        pygame.mixer.music.stop()
-        print("Background music stopped.")
-
-    def play_sound_effect(self, action):
-        """
-        Plays the sound effect associated with a specific action.
-
-        :param action: The action triggering the sound effect (e.g., "steal_points").
-        """
-        if self.is_muted:
-            print("Sound is muted. No sound effect played.")
-            return
-        if action in self.sound_effects:
-            sound = pygame.mixer.Sound(self.sound_effects[action])
-            sound.play()
-            print(f"Playing sound effect for action: {action}")
+    def toggle_music(self):
+        if self.is_music_playing:
+            pygame.mixer.music.pause()
+            self.is_music_playing = False
         else:
-            print(f"No sound effect found for action: {action}")
-
-    def mute(self):
-        """
-        Toggles the mute state for all sounds.
-        """
-        self.is_muted = not self.is_muted
-        pygame.mixer.music.set_volume(0 if self.is_muted else 1)
-        print("Sound is now muted." if self.is_muted else "Sound is now unmuted.")
-
-    def update_music(self, new_track, loop=True):
-        """
-        Updates the background music to a new track.
-
-        :param new_track: Path to the new music file.
-        :param loop: Whether to loop the new music.
-        """
-        self.stop_background_music()
-        self.play_background_music(new_track, loop)
-        print(f"Background music updated to: {new_track}")
+            pygame.mixer.music.unpause()
+            self.is_music_playing = True

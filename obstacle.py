@@ -1,38 +1,18 @@
+import pygame
+
 class Obstacle:
-    """
-    Represents an obstacle on the game map.
-    """
-
-    def __init__(self, position, size=(1, 1), damage=10):
-        """
-        Initializes the obstacle with its position, size, and damage value.
-
-        :param position: Tuple (x, y) representing the obstacle's position.
-        :param size: Tuple (width, height) representing the obstacle's size.
-        :param damage: Integer value representing the damage dealt to the player on collision.
-        """
-        self.position = position
-        self.size = size
-        self.damage = damage
+    def __init__(self, position, size, damage):
+        self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
+        self.damage = damage  # The damage this obstacle deals when collided with
 
     def collide(self, player):
         """
-        Checks if the player collides with the obstacle and applies damage if so.
-
-        :param player: The Player object.
-        :return: True if a collision occurs, False otherwise.
+        Check if there is a collision with the player.
         """
-        px, py = player.position
-        ox, oy = self.position
-        width, height = self.size
+        return self.rect.colliderect(player.rect)
 
-        # Check for collision (basic box overlap detection)
-        if ox <= px <= ox + width and oy <= py <= oy + height:
-            print(f"Collision detected with obstacle at {self.position}!")
-            player.take_damage(self.damage)
-            return True
-        return False
-
-    def __str__(self):
-        """String representation of the obstacle."""
-        return f"Obstacle at {self.position} with size {self.size} and damage {self.damage}"
+    def draw(self, screen, camera):
+        """
+        Draw the obstacle on the screen, adjusted by the camera.
+        """
+        pygame.draw.rect(screen, (255, 0, 0), camera.apply(self.rect))  # Draw in red for visibility
