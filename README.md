@@ -174,4 +174,4 @@ Throughout this process, I learned the importance of testing and debugging incre
 
 The hardest part of the project was ensuring visual fidelity, particularly with platform images. Cropping and scaling the platform images to fit the game world without distortion was unexpectedly challenging. Managing interactions between multiple classes, like the player, NPC, and platforms, also required careful coordination.
 
-If I were to start again, I I would allocate more time to designing assets and testing earlier in the development process. A clearer plan for class interactions and game states would have saved time spent troubleshooting later. Overall, this project was a rewarding experience that showcased the importance of planning, perseverance, and adaptability.
+If I were to start again, I would allocate more time to designing assets and testing earlier in the development process. A clearer plan for class interactions and game states would have saved time spent troubleshooting later. Overall, this project was a rewarding experience that showcased the importance of planning, perseverance, and adaptability.
