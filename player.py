@@ -2,56 +2,53 @@ import pygame
 
 class Player:
     def __init__(self, image_path, x, y, scale=(50, 100)):
+        # Load and scale the player image
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, scale)
         self.rect = self.image.get_rect(topleft=(x, y))
         self.velocity = pygame.math.Vector2(0, 0)
         self.speed = 5
-        self.jump_strength = 10
+        self.jump_strength = 15
+        self.gravity = 1
         self.on_ground = False
+        self.score = 0  # Track the player's score
 
-    def handle_keys(self):
+    def handle_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
-            self.move(-self.speed, 0)
+            self.rect.x -= self.speed
         if keys[pygame.K_RIGHT]:
-            self.move(self.speed, 0)
+            self.rect.x += self.speed
         if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()
 
-    def move(self, dx, dy):
-        """Move each axis separately. Note that this doesn't include collision handling."""
-        self.rect.x += dx
-        self.rect.y += dy
-
-        # Simulate ground check
-        if self.rect.bottom >= 600:  # Assuming 600 is the ground level
-            self.rect.bottom = 600
-            self.velocity.y = 0
-            self.on_ground = True
-
     def jump(self):
-        if self.on_ground:
-            self.velocity.y = -self.jump_strength
-            self.on_ground = False
+        self.velocity.y = -self.jump_strength
+        self.on_ground = False
+
+    def apply_gravity(self):
+        self.velocity.y += self.gravity
+        self.rect.y += self.velocity.y
+
+    def check_platform_collisions(self, platforms):
+        self.on_ground = False
+        for platform in platforms:
+            if self.rect.colliderect(platform.rect) and self.velocity.y > 0:
+                self.rect.bottom = platform.rect.top
+                self.velocity.y = 0
+                self.on_ground = True
 
     def update(self, platforms):
-        # Apply gravity
-        self.velocity.y += 1  # Gravity effect
-        if self.velocity.y > 10:
-            self.velocity.y = 10
+        self.handle_input()
+        self.apply_gravity()
+        self.check_platform_collisions(platforms)
 
-        # Update position based on velocity
-        self.rect.y += self.velocity.y
-        self.handle_keys()
+    def draw(self, screen):
+        screen.blit(self.image, self.rect.topleft)
 
-        # Check for collision with platforms
-        for platform in platforms:
-            if self.rect.colliderect(platform.rect):
-                if self.velocity.y > 0:
-                    self.rect.bottom = platform.rect.top
-                    self.velocity.y = 0
-                    self.on_ground = True
-
-    def draw(self, screen, camera):
-        screen.blit(self.image, camera.apply(self.rect))
+    def collect_coin(self, coin):
+        """Handles collecting a coin."""
+        if self.rect.colliderect(coin.rect):
+            self.score += 1  # Increase the player's score
+            return True  # Indicate the coin should be removed
+        return False

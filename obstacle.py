@@ -1,18 +1,26 @@
 import pygame
 
-class Obstacle:
-    def __init__(self, position, size, damage):
-        self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
-        self.damage = damage  # The damage this obstacle deals when collided with
-
-    def collide(self, player):
+class Coin:
+    def __init__(self, x, y, radius=10, color=(255, 215, 0)):
         """
-        Check if there is a collision with the player.
+        Represents a coin collectible.
+        :param x: X-coordinate of the coin.
+        :param y: Y-coordinate of the coin.
+        :param radius: Radius of the coin (default is 10 for circular coins).
+        :param color: Color of the coin (default is gold).
+        """
+        self.rect = pygame.Rect(x - radius, y - radius, radius * 2, radius * 2)
+        self.radius = radius
+        self.color = color
+
+    def draw(self, screen):
+        """Draw the coin as a circle."""
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+
+    def collect(self, player):
+        """
+        Check if the coin is collected by the player.
+        :param player: The player object.
+        :return: True if the player collects the coin, False otherwise.
         """
         return self.rect.colliderect(player.rect)
-
-    def draw(self, screen, camera):
-        """
-        Draw the obstacle on the screen, adjusted by the camera.
-        """
-        pygame.draw.rect(screen, (255, 0, 0), camera.apply(self.rect))  # Draw in red for visibility
